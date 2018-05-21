@@ -1,108 +1,81 @@
-# CarND-Controls-MPC
-Self-Driving Car Engineer Nanodegree Program
 
----
+# Overview
 
-## Dependencies
+This project implements a Model Predictive Controller(MPC) to control a car in Udacity's simulator, to make the car follow the predicted trajectory. The communication strategy is that the simulator send car information to the program via uWebsockets, to get a response from program which contains sterring angle and throttle. 
 
-* cmake >= 3.5
- * All OSes: [click here for installation instructions](https://cmake.org/install/)
-* make >= 4.1(mac, linux), 3.81(Windows)
-  * Linux: make is installed by default on most Linux distros
-  * Mac: [install Xcode command line tools to get make](https://developer.apple.com/xcode/features/)
-  * Windows: [Click here for installation instructions](http://gnuwin32.sourceforge.net/packages/make.htm)
-* gcc/g++ >= 5.4
-  * Linux: gcc / g++ is installed by default on most Linux distros
-  * Mac: same deal as make - [install Xcode command line tools]((https://developer.apple.com/xcode/features/)
-  * Windows: recommend using [MinGW](http://www.mingw.org/)
-* [uWebSockets](https://github.com/uWebSockets/uWebSockets)
-  * Run either `install-mac.sh` or `install-ubuntu.sh`.
-  * If you install from source, checkout to commit `e94b6e1`, i.e.
-    ```
-    git clone https://github.com/uWebSockets/uWebSockets
-    cd uWebSockets
-    git checkout e94b6e1
-    ```
-    Some function signatures have changed in v0.14.x. See [this PR](https://github.com/udacity/CarND-MPC-Project/pull/3) for more details.
+# Dependencies installation
 
-* **Ipopt and CppAD:** Please refer to [this document](https://github.com/udacity/CarND-MPC-Project/blob/master/install_Ipopt_CppAD.md) for installation instructions.
-* [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page). This is already part of the repo so you shouldn't have to worry about it.
-* Simulator. You can download these from the [releases tab](https://github.com/udacity/self-driving-car-sim/releases).
-* Not a dependency but read the [DATA.md](./DATA.md) for a description of the data sent back from the simulator.
+The project has the following dependencies (from Udacity's seed project):
+
+- cmake >= 3.5
+- make >= 4.1
+- gcc/g++ >= 5.4
+- Udacity's simulator.
+- Ipopt and CppAD
+
+And what I want to emphaszie here is that: Please don't try a lot to install the environment on MAC, there are too many strange thing you will encounter：
+
+1. you need to install Openssl again manually.
+2. Ipopt can't be installed, finally I followed this dude's [recommendation](https://discussions.udacity.com/t/installing-ipopt-on-mac/502218/12), and got it installed.
+3. but when I try out my code, the MPC solve always out put 0 as steering and throttle. I haven't figure out why yet, I suspect that the ipopt solver doesn't work properly, maybe there are still some issues about my installation.
 
 
-## Basic Build Instructions
+Finally I seted up all the enviroment on a virtual machine with Ubuntu16.04, and it worked. but the simulator runs so badly on vm, so I run my code on unbuntu vm, and simulator on host MAC OS, if anyone will use the same environment, please note it's very important to configure the [Port forwarding](https://classroom.udacity.com/nanodegrees/nd013/parts/40f38239-66b6-46ec-ae68-03afd8a601c8/modules/0949fca6-b379-42af-a919-ee50aa304e6a/lessons/f758c44c-5e40-4e01-93b5-1a82aa4e044f/concepts/16cf4a78-4fc7-49e1-8621-3450ca938b77)
 
-1. Clone this repo.
-2. Make a build directory: `mkdir build && cd build`
-3. Compile: `cmake .. && make`
-4. Run it: `./mpc`.
+For instructions on how to install these components on different operating systems, please, visit [Udacity's seed project](https://github.com/udacity/CarND-MPC-Project). As this particular implementation was done on Mac OS, the rest of this documentation will be focused on Mac OS. I am sorry to be that restrictive.
 
-## Tips
 
-1. It's recommended to test the MPC on basic examples to see if your implementation behaves as desired. One possible example
-is the vehicle starting offset of a straight line (reference). If the MPC implementation is correct, after some number of timesteps
-(not too many) it should find and track the reference line.
-2. The `lake_track_waypoints.csv` file has the waypoints of the lake track. You could use this to fit polynomials and points and see of how well your model tracks curve. NOTE: This file might be not completely in sync with the simulator so your solution should NOT depend on it.
-3. For visualization this C++ [matplotlib wrapper](https://github.com/lava/matplotlib-cpp) could be helpful.)
-4.  Tips for setting up your environment are available [here](https://classroom.udacity.com/nanodegrees/nd013/parts/40f38239-66b6-46ec-ae68-03afd8a601c8/modules/0949fca6-b379-42af-a919-ee50aa304e6a/lessons/f758c44c-5e40-4e01-93b5-1a82aa4e044f/concepts/23d376c7-0195-4276-bdf0-e02f1f3c665d)
-5. **VM Latency:** Some students have reported differences in behavior using VM's ostensibly a result of latency.  Please let us know if issues arise as a result of a VM environment.
+Click the "Select" button, and the car starts driving. You will see the debugging information on the PID controller terminal. A short video with the final parameters is [./videos/final-parameters.mov](./videos/final-parameters.mov).
 
-## Editor Settings
+# [Rubic](https://review.udacity.com/#!/rubrics/896/view) points
 
-We've purposefully kept editor configuration files out of this repo in order to
-keep it as simple and environment agnostic as possible. However, we recommend
-using the following settings:
+## Compilation
 
-* indent using spaces
-* set tab width to 2 spaces (keeps the matrices in source code aligned)
+### Your code should compile.
 
-## Code Style
+The code compiles without errors with cmake and make, only a few warning which hs no influence for the demonstration.
 
-Please (do your best to) stick to [Google's C++ style guide](https://google.github.io/styleguide/cppguide.html).
+## Implementation
 
-## Project Instructions and Rubric
+### The Model
 
-Note: regardless of the changes you make, your project must be buildable using
-cmake and make!
+The model could be described as following state equations:
 
-More information is only accessible by people who are already enrolled in Term 2
-of CarND. If you are enrolled, see [the project page](https://classroom.udacity.com/nanodegrees/nd013/parts/40f38239-66b6-46ec-ae68-03afd8a601c8/modules/f1820894-8322-4bb3-81aa-b26b3c6dcbaf/lessons/b1ff3be0-c904-438e-aad3-2b5379f0e0c3/concepts/1a2255a0-e23c-44cf-8d41-39b8a3c8264a)
-for instructions and the project rubric.
+```
+x[t] = x[t-1] + v[t-1] * cos(psi[t-1]) * dt
+y[t] = y[t-1] + v[t-1] * sin(psi[t-1]) * dt
+psi[t] = psi[t-1] + v[t-1] * delta[t-1] * dt / Lf
+v[t] = v[t-1] + a[t-1] * dt
+cte[t] = f(x[t-1]) - y[t-1] + v[t-1] * sin(epsi[t-1]) * dt
+epsi[t] = psi[t] - psides[t-1] + v[t-1] * delta[t-1] * dt / Lf
+```
 
-## Hints!
+Where:
 
-* You don't have to follow this directory structure, but if you do, your work
-  will span all of the .cpp files here. Keep an eye out for TODOs.
+- `x, y` : position.
+- `psi` : heading.
+- `v` : Speed.
+- `cte` : Cross-track error.
+- `epsi` : Orientation error.
+- `Lf`: distance between the car of mass and the front wheels, set as 2.67 here.
 
-## Call for IDE Profiles Pull Requests
+The model will try to minimize combination of many factors (see lines 52-72 in MPC.cpp), finally output the car control signal: throttle an steering angle.
 
-Help your fellow students!
 
-We decided to create Makefiles with cmake to keep this project as platform
-agnostic as possible. Similarly, we omitted IDE profiles in order to we ensure
-that students don't feel pressured to use one IDE or another.
+### Timestep Length and Elapsed Duration (N & dt)
 
-However! I'd love to help people get up and running with their IDEs of choice.
-If you've created a profile for an IDE that you think other students would
-appreciate, we'd love to have you add the requisite profile files and
-instructions to ide_profiles/. For example if you wanted to add a VS Code
-profile, you'd add:
+The number of points(`N`) and the time interval(`dt`) define the prediction horizon and impact the performance of control alot. After tried out of many combination, including N from 10, 20, 30 and dt from 0.1s to 1s. Finally I use 10 as N and 0.1s as dt, it seems work well in simulator for a whole lap. 
 
-* /ide_profiles/vscode/.vscode
-* /ide_profiles/vscode/README.md
+### Polynomial Fitting and MPC Preprocessing
 
-The README should explain what the profile does, how to take advantage of it,
-and how to install it.
+The waypoints from simulator need to be transformed to the car coordinate, see lines 111-116 in main.cpp. Then fit to 3-rd degree polynomil, see line 119 in main.cpp. These polynomial coefficients are transmitted to solver to get trajectory.
 
-Frankly, I've never been involved in a project with multiple IDE profiles
-before. I believe the best way to handle this would be to keep them out of the
-repo root to avoid clutter. My expectation is that most profiles will include
-instructions to copy files to a new location to get picked up by the IDE, but
-that's just a guess.
+### Model Predictive Control with Latency
 
-One last note here: regardless of the IDE used, every submitted project must
-still be compilable with cmake and make./
+The model used state values which considered the latency, which can be found in lines 122-139 in main.cpp.
 
-## How to write a README
-A well written README file can enhance your project and portfolio.  Develop your abilities to create professional README files by completing [this free course](https://www.udacity.com/course/writing-readmes--ud777).
+## Simulation
+
+### The vehicle must successfully drive a lap around the track.
+
+The model could successfully control the car to drive withoug going off road. Please refer to the [video](./videos/P5-MPC-VIDEO.mov) to see the result.
