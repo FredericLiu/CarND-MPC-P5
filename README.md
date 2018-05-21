@@ -22,10 +22,6 @@ And what I want to emphaszie here is that: Please don't try a lot to install the
 
 Finally I seted up all the enviroment on a virtual machine with Ubuntu16.04, and it worked. but the simulator runs so badly on vm, so I run my code on unbuntu vm, and simulator on host MAC OS, if anyone will use the same environment, please note it's very important to configure the [Port forwarding](https://classroom.udacity.com/nanodegrees/nd013/parts/40f38239-66b6-46ec-ae68-03afd8a601c8/modules/0949fca6-b379-42af-a919-ee50aa304e6a/lessons/f758c44c-5e40-4e01-93b5-1a82aa4e044f/concepts/16cf4a78-4fc7-49e1-8621-3450ca938b77)
 
-For instructions on how to install these components on different operating systems, please, visit [Udacity's seed project](https://github.com/udacity/CarND-MPC-Project). As this particular implementation was done on Mac OS, the rest of this documentation will be focused on Mac OS. I am sorry to be that restrictive.
-
-
-Click the "Select" button, and the car starts driving. You will see the debugging information on the PID controller terminal. A short video with the final parameters is [./videos/final-parameters.mov](./videos/final-parameters.mov).
 
 # [Rubic](https://review.udacity.com/#!/rubrics/896/view) points
 
