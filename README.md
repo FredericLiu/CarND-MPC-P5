@@ -78,4 +78,4 @@ The model used state values which considered the latency, which can be found in 
 
 ### The vehicle must successfully drive a lap around the track.
 
-The model could successfully control the car to drive withoug going off road. Please refer to the [video](./videos/P5-MPC-VIDEO.mov) to see the result.
+The model could successfully control the car to drive withoug going off road. Please refer to the [video](https://github.com/FredericLiu/CarND-MPC-P5/blob/master/video/P5-MPC-VIDEO.mov) to see the result.
